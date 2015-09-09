@@ -41,3 +41,12 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+cache
+env
+__pycache__
+*.suo
+*.pyc
+*.pyo
+app_*.py
+dialogue_*.py
