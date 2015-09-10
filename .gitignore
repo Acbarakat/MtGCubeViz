@@ -45,6 +45,7 @@ Temporary Items
 cache
 env
 __pycache__
+\build
 *.suo
 *.pyc
 *.pyo
