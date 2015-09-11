@@ -56,7 +56,7 @@ class GroupingModel(XPathModel):
 
     @property
     def _tree(self):
-        return self._parent._cube_data
+        return self._parent._cubeData
 
     def rowCount(self, parent):
         if self._tree:
@@ -95,7 +95,7 @@ class CardsModel(QAbstractTableModel):
         else:
             xpathcmd = "//grouping"
 
-        return self._parent._cube_data.find(xpathcmd)
+        return self._parent._cubeData.find(xpathcmd)
 
     @property
     def h_header(self):
