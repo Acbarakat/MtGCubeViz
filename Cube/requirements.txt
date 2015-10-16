@@ -1,4 +1,4 @@
 gspread==0.2.5
 lxml==3.4.4
-PyQt4==4.11.4
+PyQt5==5.5.0
 cx-Freeze==4.3.4

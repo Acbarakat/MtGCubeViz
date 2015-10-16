@@ -1,6 +1,7 @@
-from PyQt4 import QtGui, QtCore, QtNetwork
+﻿from PyQt5 import QtGui, QtCore, QtNetwork
+from PyQt5.QtWidgets import QApplication
 
-class SingleApplication(QtGui.QApplication):
+class SingleApplication(QApplication):
     messageAvailable = QtCore.pyqtSignal(object)
 
     def __init__(self, argv, key):

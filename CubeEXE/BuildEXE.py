@@ -1,15 +1,16 @@
-'''
+﻿'''
 Created on Oct 29, 2013
 
 @author: acbaraka
 '''
 import sys
-from PyQt4 import uic
+import stat
+from PyQt5 import uic
 from cx_Freeze import setup, Executable
 
-includes        = [ 'lxml._elementpath' ] #[ "resources_rc" ]
+includes        = [ 'lxml._elementpath', 'json' ] #[ "resources_rc" ]
 include_files   = [ ]
-excludes        = [ "PyQt4.uic" ]
+excludes        = [ "PyQt5.uic" ]
 
 build_options = {"includes" : includes, 
                  "excludes" : excludes, 
@@ -39,7 +40,6 @@ def onerror(func, path, exc_info):
 
     Usage : ``shutil.rmtree(path, onerror=onerror)``
     """
-    import stat
     if not os.access(path, os.W_OK):
         # Is the error an access error ?
         os.chmod(path, stat.S_IWUSR)
@@ -50,15 +50,14 @@ def onerror(func, path, exc_info):
 def compileGUI(pyrcc_path=None, uic_path=".\\..\\Cube\\UI\\"):
     if not pyrcc_path:
         head, _ = os.path.split(sys.executable)
-        pyrcc_path = os.path.join(head, r"Lib\site-packages\PyQt4\pyrcc4.exe")
+        pyrcc_path = os.path.join(head, r"Lib\site-packages\PyQt5\pyrcc5.exe")
     
     if os.path.exists( pyrcc_path ):
         print("Compiling Resources")
-        cmd = "%s -o ./resources_rc.py ./resources.qrc %s" % (pyrcc_path, "-py3" if sys.version_info > (3, 0) else "-py2")
-        print(cmd)
+        cmd = "%s -o ./resources_rc.py ./resources.qrc -py3" % pyrcc_path
         os.system(cmd)
     else:
-        print("Cannot find pyrcc4.exe")
+        print("Cannot find pyrcc5.exe")
     
     print("\nComping UI files")
     uic.compileUiDir(uic_path, recurse=True)

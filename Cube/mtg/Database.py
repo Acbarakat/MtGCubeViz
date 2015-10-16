@@ -65,7 +65,7 @@ class CardDatabase(list):
 if __name__ == "__main__":
     import sys
     from pprint import pprint
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtGui import QApplication
 
     app = QApplication(sys.argv)
     x = CardDatabase()

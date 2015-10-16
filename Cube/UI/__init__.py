@@ -5,7 +5,7 @@ def compile():
     if getattr(sys, 'frozen', False):
         return
 
-    from PyQt4 import uic
+    from PyQt5 import uic
 
     print("Compiling all files unders %s" % os.path.abspath("."))
     uic.compileUiDir(".", recurse=True)

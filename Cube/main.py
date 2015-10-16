@@ -4,8 +4,9 @@ from json import loads
 
 import gspread
 from lxml import etree
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 from GUI.models import CardsModel, GroupingModel
 from GUI.delegates import CardsDelegate
@@ -95,8 +96,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                self.FILE_EXT_FORMATS, 
                                                options=options)
         
-        if cubeFile:
-            self._fileLoad(cubeFile)
+        if cubeFile[0]:
+            self._fileLoad(cubeFile[0])
             
     def fileSave(self):
         options = QFileDialog.Options()
@@ -115,7 +116,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             data = etree.parse(cubeFile)
             self._cubeData = data
-            self.grouping_model.reset()
+            self.grouping_model.beginResetModel()
+            self.grouping_model.endResetModel()
             self._cubeFile = cubeFile
         except Exception as e:
             self.errorMessage("Failed to load file " + str(e))
@@ -145,7 +147,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # ------------------------------- ??? Actions --------------------------------
 
     def resetTable(self):
-        self.tablemodel.reset()
+        self.tablemodel.beginResetModel()
+        self.tablemodel.endResetModel()
         for i in range(self.tablemodel.columnCount()):
             self.tableView.setColumnWidth(i, CARD_WIDTH)
 

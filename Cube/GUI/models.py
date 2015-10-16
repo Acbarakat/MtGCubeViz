@@ -1,8 +1,8 @@
 ﻿import os
 
 from lxml import etree, objectify
-from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from PyQt4.QtCore import Qt, QAbstractTableModel, QVariant, QModelIndex, QAbstractItemModel, QUrl, QAbstractListModel
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
+from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QModelIndex, QAbstractItemModel, QUrl, QAbstractListModel
 
 from mtg.Card import IMAGE_CACHE_FOLDER
 

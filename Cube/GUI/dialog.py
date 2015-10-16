@@ -1,5 +1,5 @@
-﻿from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog, QTableWidgetItem
+﻿from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 from UI.dialogue_CardChoice import Ui_Dialog
 
 class CardSelectionDialog(QDialog, Ui_Dialog):

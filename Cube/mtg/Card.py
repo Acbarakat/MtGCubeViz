@@ -1,4 +1,4 @@
-﻿from PyQt4 import QtGui, QtCore
+﻿from PyQt5 import QtGui, QtCore
 import os
 import json
 from collections import defaultdict
@@ -122,7 +122,7 @@ class Card(object):
         return self.image_data
 
 if __name__ == "__main__":
-    from PyQt4.QtGui import QApplication, QLabel
+    from PyQt5.QtGui import QApplication, QLabel
     from pprint import pprint
     import sys
 
