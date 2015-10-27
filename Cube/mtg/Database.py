@@ -45,9 +45,30 @@ class CardDatabase(list):
             else:
                 self.append( Card(v) )
 
+    def sort(self, key=None, reverse=False):
+        data = sorted(self, key = key, reverse = reverse)
+        return CardDatabase(data=data)
+
     def findByName(self, cardname):
         #return list(filter(lambda card: card.name == cardname.encode('utf-8'), self))
         data = list(filter(lambda card: card.name == cardname, self))
+        return CardDatabase(data=data)
+
+    def filterDuplicates(self):
+        data = []
+        names = []
+
+        for card in self:
+            if card.name in names:
+                continue
+
+            data.append(card)
+            names.append(card.name)
+        
+        return CardDatabase(data=data) 
+
+    def filterInNameList(self, cardname_list):
+        data = list(filter(lambda card: card.name in cardname_list, self))
         return CardDatabase(data=data)
 
     def filterMultiColorOnly(self):
@@ -61,6 +82,11 @@ class CardDatabase(list):
     def filterByNotColor(self, color):
         data = list(filter(lambda card: color not in card.colors, self))
         return CardDatabase(data=data)
+
+    def filterByRarity(self, rarity):
+        data = list(filter(lambda card: rarity == card.rarity, self))
+        return CardDatabase(data=data)
+
 
 if __name__ == "__main__":
     import sys

@@ -53,6 +53,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QTimer.singleShot(500, lambda: self._initCont(*sys.argv))
     
     def _initCont(self, *args):
+        if self.dockWidget_Breakdown.isFloating():
+            self.dockWidget_Breakdown.move(self.pos().x() + self.width() + 20,
+                                           self.pos().y())
+            self.dockWidget_Breakdown.resize(-1,
+                                             self.height())
+
         self.loadDatabase()
 
         if len(args) > 1:

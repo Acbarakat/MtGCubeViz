@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <breakdown>
+    <item query='color is white'>{W}</item>
+  </breakdown>
+  <booster>
+    <pack name='General'>
+      <item slot='1'>
+        <flex_item flex='1' rarity='Mythic Rare' />
+        <flex_item flex='7' rarity='Rare' />
+      </item>
+      <item slot='2,3,4' rarity='Uncommon' />
+      <item slot='5-14' rarity='Common' />
+    </pack>
+  </booster>
+  <grouping name="tricolor">
+    <headers>
+      <header query="color not black AND color not red" color1="white" color2="green" color3="blue">Bant</header>
+      <header query="color not blue AND color not red" color1="white" color2="green" color3="black">Abzan</header>
+      <header query="color not red AND color not green" color1="blue" color2="white" color3="black">Esper</header>
+      <header query="color not black AND color not green" color1="blue" color2="white" color3="red">Jeskai</header>
+      <header query="color not white AND color not green" color1="black" color2="blue" color3="red">Grixis</header>
+      <header query="color not white AND color not red" color1="black" color2="blue" color3="green">Sultai</header>
+      <header query="color not white AND color not blue" color1="red" color2="black" color3="green">Jund</header>
+      <header query="color not blue AND color not green" color1="red" color2="white" color3="black">Mardu</header>
+      <header query="color not black AND color not blue" color1="green" color2="white" color3="red">Naya</header>
+      <header query="color not white AND color not black" color1="green" color2="blue" color3="red">Temur</header>
+    </headers>
+    <vheaders>
+      <vheader query="type m Legendary AND type m Creature AND rarity m mythic AND color eq {color1} AND color eq {color2} AND color eq {color3}">Mythic Leader</vheader>
+      <!--<vheader query="type m Legendary AND type m Creature AND rarity eq rare">Rare Follower</vheader>-->
+      <vheader query="rarity eq rare and rarity not mythicrare and type not Legendary AND color eq {color1} AND color eq {color2} AND color eq {color3}">Rare Tricolor</vheader>
+      <!--<vheader query="color not {color3}">AB rare</vheader>-->
+      <vheader query="name m Charm AND color eq {color1} AND color eq {color2} AND color eq {color3}">Tricolor Charm</vheader>
+      <vheader query="rarity eq uncommon AND color eq {color1} AND color eq {color2} AND color eq {color3}">Uncommon Tricolor</vheader>
+      <vheader query="rarity eq common AND color eq {color1} AND color eq {color2} AND color eq {color3}">common Tricolor</vheader>
+    </vheaders>
+    <cards>
+      <card column="Bant" row="Rare Tricolor">Wargate</card>
+      <card column="Sultai" row="Rare Tricolor">Villainous Wealth</card>
+      <card column="Jund" row="Rare Tricolor">Lavalanche</card>
+      <card column="Mardu" row="Rare Tricolor">Crackling Doom</card>
+      <card column="Temur" row="Rare Tricolor">Guided Passage</card>
+      <card column="Grixis" row="Mythic Leader">Nekusar, the Mindrazer</card>
+      <card column="Esper" row="Mythic Leader">Oloro, Ageless Ascetic</card>
+      <card column="Naya" row="Rare Tricolor">Realm Razer</card>
+      <card column="Jeskai" row="Rare Tricolor">Sage of the Inward Eye</card>
+      <card column="Esper" row="Rare Tricolor">Magister Sphinx</card>
+      <card column="Esper" row="Rare Tricolor">Wandering Mage</card>
+      <card column="Grixis" row="Rare Tricolor">Cruel Ultimatum</card>
+      <card column="Abzan" row="Rare Tricolor">Abzan Ascendancy</card>
+      <card column="Naya" row="Uncommon Tricolor">Woolly Thoctar</card>
+      <card column="Jund" row="Uncommon Tricolor">Sprouting Thrinax</card>
+      <card column="Esper" row="Uncommon Tricolor">Etherwrought Page</card>
+      <card column="Grixis" row="Uncommon Tricolor">Drastic Revelation</card>
+      <card column="Temur" row="Uncommon Tricolor">Bear's Companion</card>
+      <card column="Mardu" row="Uncommon Tricolor">Mardu Roughrider</card>
+      <card column="Sultai" row="Uncommon Tricolor">Sultai Soothsayer</card>
+      <card column="Jeskai" row="Uncommon Tricolor">Warden of the Eye</card>
+      <card column="Abzan" row="Uncommon Tricolor">Armament Corps</card>
+      <card column="Bant" row="Uncommon Tricolor">Skyward Eye Prophets</card>
+      <card column="Temur" row="Mythic Leader">Surrak Dragonclaw</card>
+      <card column="Naya" row="Mythic Leader">Marath, Will of the Wild</card>
+      <card column="Jund" row="Mythic Leader">Shattergang Brothers</card>
+      <card column="Sultai" row="Mythic Leader">Sidisi, Brood Tyrant</card>
+      <card column="Mardu" row="Mythic Leader">Zurgo Helmsmasher</card>
+      <card column="Abzan" row="Rare Follower"/>
+      <card column="Mardu" row="Mythic Leader">Zurgo Helmsmasher</card>
+      <card column="Bant" row="Mythic Leader">Roon of the Hidden Realm</card>
+      <card column="Abzan" row="Mythic Leader">Ghave, Guru of Spores</card>
+      <card column="Temur" row="Tricolor Charm">Temur Charm</card>
+      <card column="Naya" row="Tricolor Charm">Naya Charm</card>
+      <card column="Sultai" row="Tricolor Charm">Sultai Charm</card>
+      <card column="Mardu" row="Tricolor Charm">Mardu Charm</card>
+      <card column="Jund" row="Tricolor Charm">Jund Charm</card>
+      <card column="Grixis" row="Tricolor Charm">Grixis Charm</card>
+      <card column="Jeskai" row="Tricolor Charm">Jeskai Charm</card>
+      <card column="Esper" row="Tricolor Charm">Esper Charm</card>
+      <card column="Abzan" row="Tricolor Charm">Abzan Charm</card>
+      <card column="Bant" row="Tricolor Charm">Bant Charm</card>
+      <card row="Mythic Leader" column="Jeskai">Narset, Enlightened Master</card>
+    </cards>
+  </grouping>
+  <grouping name="guilds">
+     <headers>
+      <header query="color not black AND color not red AND color not green" color1="white" color2="blue">Azorius</header>
+      <header query="color not blue AND color not red AND color not green" color1="white" color2="black">Orzhov</header>
+      <header query="color not white AND color not green AND color not red" color1="blue" color2="black">Dimir</header>
+      <header query="color not black AND color not white AND color not green" color1="blue" color2="red">Izzet</header>
+      <header query="color not white AND color not blue AND color not green" color1="black" color2="red">Rakdos</header>
+      <header query="color not white AND color not blue AND color not red" color1="black" color2="green">Golari</header>
+      <header query="color not white AND color not blue AND color not black" color1="red" color2="green">Gruul</header>
+      <header query="color not blue AND color not black AND color not green" color1="red" color2="white">Boros</header>
+      <header query="color not blue AND color not black AND color not red" color1="green" color2="white">Selsnya</header>
+      <header query="color not white AND color not black AND color not red" color1="green" color2="blue">Simic</header>
+    </headers>
+    <vheaders>
+      <vheader query="type m Legendary AND type m Creature AND rarity not mythicrare AND rarity eq rare AND color eq {color1} AND color eq {color2}">Rare Leader</vheader>
+      <vheader query="rarity eq rare and rarity not mythicrare and type not Legendary AND color eq {color1} AND color eq {color2}">Rare Dual</vheader>
+      <vheader query="rarity eq rare and rarity not mythicrare and manacost m / AND color eq {color1} AND color eq {color2}">Rare Hybrid</vheader>
+      <vheader query="name m Charm AND color eq {color1} AND color eq {color2}">Guild Charm</vheader>
+      <vheader query="rarity eq uncommon AND manacost not / AND color eq {color1} AND color eq {color2}">Uncommon Dual</vheader>
+      <vheader query="rarity eq uncommon AND manacost m / AND color eq {color1} AND color eq {color2}">Uncommon Hybrid</vheader>
+      <vheader query="rarity eq common AND manacost not / AND color eq {color1} AND color eq {color2}">Common Dual</vheader>
+      <vheader query="rarity eq common AND manacost m / AND color eq {color1} AND color eq {color2}">Common Hybrid</vheader>
+      <vheader query="rarity eq common AND color eq {color1} AND color not {color2} AND description m {color2}">Common AB</vheader>
+      <vheader query="rarity eq common AND color eq {color2} AND color not {color1} AND description m {color1}">Common BA</vheader>
+    </vheaders>
+    <cards>
+      <card column="Simic" row="Common BA">Silkwing Scout</card><card column="Simic" row="Common AB">Agent of Horizons</card><card column="Selsnya" row="Common BA">Setessan Griffin</card><card column="Boros" row="Common AB">Kranioceros</card><card column="Boros" row="Common BA">Angelfire Crusader</card><card column="Gruul" row="Common BA">Satyr Hedonist</card><card column="Gruul" row="Common AB">Tin Street Hooligan</card><card column="Selsnya" row="Common AB">Avacyn's Pilgrim</card><card column="Golari" row="Common BA">Elves of Deep Shadow</card><card column="Golari" row="Common AB">Kheru Dreadmaw</card><card column="Rakdos" row="Common BA">Kill-Suit Cultist</card><card column="Rakdos" row="Common AB">Deviant Glee</card><card column="Izzet" row="Common BA">Pursuit of Flight</card><card column="Dimir" row="Common BA">Ribbons of Night</card><card column="Dimir" row="Common AB">Vectis Silencers</card><card column="Selsnya" row="Rare Hybrid">Privileged Position</card><card column="Rakdos" row="Rare Hybrid">Spiteful Visions</card><card column="Izzet" row="Rare Hybrid">Nivmagus Elemental</card><card column="Orzhov" row="Rare Hybrid">Divinity of Pride</card><card column="Izzet" row="Common AB">Steamcore Weird</card><card column="Orzhov" row="Common AB">Scholar of Athreos</card><card column="Orzhov" row="Common BA">Unyielding Krumar</card><card column="Simic" row="Rare Hybrid">Biomass Mutation</card><card column="Boros" row="Rare Hybrid">Boros Reckoner</card><card column="Gruul" row="Rare Hybrid">Rubblebelt Raiders</card><card column="Golari" row="Rare Hybrid">Doomgape</card><card column="Dimir" row="Rare Hybrid">Memory Plunder</card><card column="Azorius" row="Rare Hybrid">Swans of Bryn Argoll</card><card column="Azorius" row="Common BA">Coastline Chimera</card><card column="Azorius" row="Common AB">Soulsworn Jury</card><card column="Simic" row="Uncommon Dual">Horizon Chimera</card>
+      <card column="Selsnya" row="Uncommon Dual">Trostani's Summoner</card>
+      <card column="Boros" row="Uncommon Dual">Warleader's Helix</card>
+      <card column="Gruul" row="Uncommon Dual">Fires of Yavimaya</card>
+      <card column="Golari" row="Uncommon Dual">Putrefy</card>
+      <card column="Rakdos" row="Uncommon Dual">Carnage Gladiator</card>
+      <card column="Dimir" row="Uncommon Dual">Extract from Darkness</card>
+      <card column="Orzhov" row="Uncommon Dual">Sentry of the Underworld</card>
+      <card column="Azorius" row="Uncommon Dual">Ascended Lawmage</card>
+      <card column="Simic" row="Uncommon Hybrid">Merfolk of the Depths</card>
+      <card column="Selsnya" row="Uncommon Hybrid">Dryad Militant</card>
+      <card column="Boros" row="Uncommon Hybrid">Spitemare</card>
+      <card column="Gruul" row="Uncommon Hybrid">Burning-Tree Emissary</card>
+      <card column="Golari" row="Uncommon Hybrid">Stalker Hag</card>
+      <card column="Rakdos" row="Uncommon Hybrid">Ashenmoor Gouger</card>
+      <card column="Izzet" row="Uncommon Hybrid">Nucklavee</card>
+      <card column="Dimir" row="Uncommon Hybrid">Coerced Confession</card>
+      <card column="Azorius" row="Uncommon Hybrid">Plumeveil</card>
+      <card column="Simic" row="Common Dual">Winged Coatl</card>
+      <card column="Selsnya" row="Common Dual">Unflinching Courage</card>
+      <card column="Boros" row="Common Dual">Skyknight Legionnaire</card>
+      <card column="Gruul" row="Common Dual">Ruination Wurm</card>
+      <card column="Golari" row="Common Dual">Putrid Leech</card>
+      <card column="Izzet" row="Common Dual">Goblin Electromancer</card>
+      <card column="Dimir" row="Common Dual">Agony Warp</card>
+      <card column="Orzhov" row="Common Dual">Castigate</card>
+      <card column="Azorius" row="Common Dual">Overrule</card>
+      <card column="Boros" row="Common Hybrid">Fire at Will</card>
+      <card column="Selsnya" row="Common Hybrid">Centaur Safeguard</card>
+      <card column="Simic" row="Common Hybrid">Snakeform</card>
+      <card column="Golari" row="Common Hybrid">Desecrator Hag</card>
+      <card column="Rakdos" row="Common Hybrid">Rakdos Shred-Freak</card>
+      <card column="Dimir" row="Common Hybrid">Lurking Informant</card>
+      <card column="Azorius" row="Common Hybrid">Curse of Chains</card>
+      <card column="Izzet" row="Common Hybrid">Noggle Bridgebreaker</card>
+      <card column="Gruul" row="Common Hybrid">Pit Fight</card>
+      <card column="Rakdos" row="Common Dual">Blightning</card>
+      <card column="Izzet" row="Uncommon Dual">Spellheart Chimera</card>
+      <card column="Izzet" row="Rare Leader"/>
+      <card column="Simic" row="Guild Charm">Simic Charm</card>
+      <card column="Gruul" row="Guild Charm">Gruul Charm</card>
+      <card column="Golari" row="Guild Charm">Golgari Charm</card>
+      <card column="Rakdos" row="Guild Charm">Rakdos Charm</card>
+      <card column="Selsnya" row="Guild Charm">Selesnya Charm</card>
+      <card column="Boros" row="Guild Charm">Boros Charm</card>
+      <card column="Orzhov" row="Common Hybrid">Unmake</card>
+      <card column="Orzhov" row="Uncommon Hybrid">Gift of Orzhova</card>
+      <card column="Izzet" row="Guild Charm">Izzet Charm</card>
+      <card column="Dimir" row="Guild Charm">Dimir Charm</card>
+      <card column="Orzhov" row="Guild Charm">Orzhov Charm</card>
+      <card column="Azorius" row="Guild Charm">Azorius Charm</card>
+    </cards>
+  </grouping>
+  <grouping name="mono"/>
+</root>

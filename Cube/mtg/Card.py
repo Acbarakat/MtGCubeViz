@@ -58,6 +58,10 @@ class Card(object):
         return self._data['name']#.encode("utf8")
 
     @property
+    def rarity(self):
+        return self._data['rarity']
+
+    @property
     def printings(self):
         return self._data['printings']
 

@@ -28,6 +28,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="boosterpack\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="common.py">
       <SubType>Code</SubType>
     </Compile>
@@ -69,6 +72,7 @@
     <Content Include="MyCube.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="boosterpack\" />
     <Folder Include="mtg\" />
     <Folder Include="GUI\" />
     <Folder Include="UI\" />
