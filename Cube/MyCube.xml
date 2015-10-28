@@ -5,12 +5,24 @@
   </breakdown>
   <booster>
     <pack name='General'>
-      <item slot='1'>
+      <item>
         <flex_item flex='1' rarity='Mythic Rare' />
         <flex_item flex='7' rarity='Rare' />
       </item>
-      <item slot='2,3,4' rarity='Uncommon' />
-      <item slot='5-14' rarity='Common' />
+      <item rarity='Uncommon' />
+      <item rarity='Uncommon' />
+      <item rarity='Uncommon' />
+      <item rarity='Common' type='Creature' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item rarity='Common' />
+      <item type='Land' />
     </pack>
   </booster>
   <grouping name="tricolor">

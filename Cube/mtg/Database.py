@@ -19,7 +19,7 @@ class CardDatabase(list):
     """description of class"""
 
     def __init__(self, uri="AllSets.json", data=None):
-        if data:
+        if data != None:
             self.extend(data)
             return
 
@@ -85,6 +85,10 @@ class CardDatabase(list):
 
     def filterByRarity(self, rarity):
         data = list(filter(lambda card: rarity == card.rarity, self))
+        return CardDatabase(data=data)
+
+    def filterByType(self, cardtype):
+        data = list(filter(lambda card: cardtype in card.types, self))
         return CardDatabase(data=data)
 
 
