@@ -31,6 +31,9 @@
     <Compile Include="boosterpack\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="breakdown\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="common.py">
       <SubType>Code</SubType>
     </Compile>
@@ -73,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="boosterpack\" />
+    <Folder Include="breakdown\" />
     <Folder Include="mtg\" />
     <Folder Include="GUI\" />
     <Folder Include="UI\" />

@@ -45,6 +45,34 @@ class CardDatabase(list):
             else:
                 self.append( Card(v) )
 
+    def _filterByNode(self, xml_item):
+        dblist = self
+
+        if "rarity" in xml_item.attrib:
+            rarity = xml_item.attrib["rarity"]
+
+            dblist = dblist.filterByRarity(rarity)
+
+        if "type" in xml_item.attrib:
+            cardtype = xml_item.attrib["type"]
+
+            dblist = dblist.filterByType(cardtype)
+
+        if "color" in xml_item.attrib:
+            colors = xml_item.attrib["color"]
+            colors = colors.split(",")
+
+            for color in colors:
+                dblist = dblist.filterByColor(color)
+
+            if "color_match" in xml_item.attrib:
+                match_type = xml_item.attrib["color_match"]
+
+                if match_type == "exact":
+                    dblist = dblist.filterByExactColorCount(len(colors))
+
+        return dblist
+
     def sort(self, key=None, reverse=False):
         data = sorted(self, key = key, reverse = reverse)
         return CardDatabase(data=data)
@@ -66,6 +94,10 @@ class CardDatabase(list):
             names.append(card.name)
         
         return CardDatabase(data=data) 
+
+    def filterByExactColorCount(self, i):
+        data = list(filter(lambda card: len(card.colors) == i, self))
+        return CardDatabase(data=data)
 
     def filterInNameList(self, cardname_list):
         data = list(filter(lambda card: card.name in cardname_list, self))

@@ -90,6 +90,13 @@ class Card(object):
         except KeyError:
             return []
 
+    @property
+    def cmc(self):
+        try:
+            return self._data["cmc"]
+        except KeyError:
+            return 0
+
     def _getJSONdata(self, value):
         query_url = "http://api.mtgdb.info/cards/%s" % quote(str(value))
         #print("Gathering card info for %s" % query_url)

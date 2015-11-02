@@ -45,7 +45,11 @@ class BoosterPack(object):
             temp_matches = []
 
             for flex_item in flex_items:
-                flex_amount = int( flex_item.attrib["flex"] )
+                try:
+                    flex_amount = int( flex_item.attrib["flex"] )
+                except KeyError:
+                    flex_amount = 1
+
                 for i in range(0, flex_amount):
                     flex_card = self._getMatches(matches, flex_item)
                     flex_card = random.choice(flex_card)
@@ -98,7 +102,7 @@ if __name__ == "__main__":
 
     data = etree.parse(r"MyCube.xml")
 
-    cards = data.xpath(".//grouping/cards/card")
+    cards = data.xpath(".//cards/card")
 
     main_cubedb = db.filterInNameList([card.text for card in cards])
     main_cubedb = main_cubedb.sort(key = lambda card: card.name.lower())
@@ -114,6 +118,6 @@ if __name__ == "__main__":
 
             print(p)
             for i, card in enumerate(pack_list):
-                print("Slot %2d: %s" % (i, card) )
+                print("Slot %2d: %s" % (i, card.name if card else None) )
 
             print("")
