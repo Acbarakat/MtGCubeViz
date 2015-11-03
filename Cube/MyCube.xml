@@ -214,20 +214,5 @@
     <card column="Dimir" row="Guild Charm">Dimir Charm</card>
     <card column="Orzhov" row="Guild Charm">Orzhov Charm</card>
     <card column="Azorius" row="Guild Charm">Azorius Charm</card>
-    <card>Lightning Bolt</card>
-    <card>Brainstorm</card>
-    <card>Path to Exile</card>
-    <card>Eternal Witness</card>
-    <card>Ponder</card>
-    <card>Oblivion Ring</card>
-    <card>Elves of Deep Shadow</card>
-    <card>Journey to Nowhere</card>
-    <card>Spell Pierce</card>
-    <card>Mana Leak</card>
-    <card>Elvish Mystic</card>
-    <card>Explore</card>
-    <card>Terminate</card>
-    <card>Blightning</card>
-    <card>Coiling Oracle</card>
   </cards>
 </root>

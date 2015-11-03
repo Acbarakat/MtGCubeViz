@@ -1,6 +1,8 @@
 ﻿import os
-from json import loads
+import csv
 import codecs
+from json import loads
+from lxml import etree
 
 try:
     from mtg import *
@@ -123,6 +125,72 @@ class CardDatabase(list):
         data = list(filter(lambda card: cardtype in card.types, self))
         return CardDatabase(data=data)
 
+class CubeDatabase(CardDatabase):
+    FORMAT_TEXT_FILE = "txt"
+    FORMAT_CSV_FILE  = "csv"
+    FORMAT_CUBE_FILE = "cube"
+    FORMAT_XML_FILE  = "xml"
+
+    def __init__(self):
+        pass
+
+    def _importXML(self, fpath, carddb):
+        data = etree.parse(fpath)
+
+        cards = data.xpath(".//cards/card")
+
+        main_cubedb = carddb.filterInNameList([card.text for card in cards])
+        main_cubedb = main_cubedb.sort(key = lambda card: card.name.lower())
+        main_cubedb = main_cubedb.filterDuplicates()
+
+        self.extend(main_cubedb)
+
+    def _importTXT(self, fpath, carddb):
+        with open(fpath) as f:
+            cards = f.readlines()
+
+        cards = [card.strip() for card in cards]
+
+        main_cubedb = carddb.filterInNameList(cards)
+        main_cubedb = main_cubedb.sort(key = lambda card: card.name.lower())
+        main_cubedb = main_cubedb.filterDuplicates()
+
+        self.extend(main_cubedb)
+
+    def _importCSV(self, fpath, carddb):
+        with open(fpath, "r") as f:
+            reader = csv.reader(f)
+            cards = [ cell[0].strip() for cell in reader ]
+
+        main_cubedb = carddb.filterInNameList(cards)
+        main_cubedb = main_cubedb.sort(key = lambda card: card.name.lower())
+        main_cubedb = main_cubedb.filterDuplicates()
+
+        self.extend(main_cubedb)
+
+    def fileImport(self, fpath, carddb, force_format=None):
+        if not force_format:
+            head, force_format = os.path.splitext(fpath)
+            force_format = force_format.replace(".","").lower()
+
+        if force_format in [self.FORMAT_CUBE_FILE, self.FORMAT_XML_FILE]:
+            self._importXML(fpath, carddb)
+        elif force_format == self.FORMAT_TEXT_FILE:
+            self._importTXT(fpath, carddb)
+        elif force_format == self.FORMAT_CSV_FILE:
+            self._importCSV(fpath, carddb)
+        else:
+            raise Exception("Unhandled file format (%s)" % force_format)
+
+    def fileExport(self, fpath, force_format=None):
+        if format == self.FORMAT_TEXT_FILE:
+            self._exportTXT(fpath)
+        elif format == self.FORMAT_CSV_FILE:
+            self._exportCSV(fpath)
+        elif format == self.FORMAT_CUBE_FILE:
+            self._exportCUBE(fpath)
+        else:
+            raise Exception("Unhandled format (%s)" % format)
 
 if __name__ == "__main__":
     import sys

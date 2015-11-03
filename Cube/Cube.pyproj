@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>23991d1c-1e51-414f-951f-4d02efd235a8</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>boosterpack\__init__.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -56,20 +56,17 @@
     <Compile Include="GUI\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mtg\Query.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="mtg\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\app_MainWindow.py" />
-    <Compile Include="UI\dialogue_CardChoice.py" />
     <Compile Include="UI\__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="SampleImport.csv" />
+    <Content Include="SampleImport.txt" />
     <Content Include="UI\app_MainWindow.ui" />
     <Content Include="UI\dialogue_CardChoice.ui" />
     <Content Include="MyCube.xml" />
@@ -95,6 +92,7 @@
     </Interpreter>
   </ItemGroup>
   <ItemGroup>
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />
   </ItemGroup>
   <PropertyGroup>
