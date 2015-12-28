@@ -1,21 +1,24 @@
-﻿from PyQt5 import QtGui, QtCore
-import os
+﻿import os
 import json
+import logging
 from collections import defaultdict
 
+from PyQt5 import QtGui, QtCore
+
 try:
-    from common import urlopen, quote, QString
+    from common import urlopen, quote
     from mtg import *
 except ImportError:
     import sys
     fpath, _ = os.path.split(__file__)
     sys.path.append(os.path.join(fpath, ".."))
-    from common import urlopen, quote, QString
+    from common import urlopen, quote
     from __init__ import *
 
-#CARD_HEIGHT = 310
-#CARD_WIDTH  = 223
-CARD_WIDTH, CARD_HEIGHT = (312, 445)
+log = logging.getLogger("card")
+log.setLevel(logging.DEBUG)
+
+CARD_WIDTH, CARD_HEIGHT = (223, 311)
 
 IMAGE_CACHE_FOLDER = os.path.join( os.path.split(os.path.abspath(__file__))[0], "..", "cache" )
 
@@ -31,15 +34,19 @@ class Card(object):
             data = self._getJSONdata(name_or_multiverse_id)
             if data:
                 self._data.update(data)
-        elif type(name_or_multiverse_id) in [str, QString]:
+        elif type(name_or_multiverse_id) == str:
             data = self._getJSONdata(name_or_multiverse_id)
             if data:
                 self._data.update(data[0])
-        elif type(name_or_multiverse_id) in [dict]:
+        elif type(name_or_multiverse_id) == dict:
             if name_or_multiverse_id:
                 self._data = name_or_multiverse_id
         else:
             raise Exception("Unhandled type %s!"  % type(name_or_multiverse_id))
+
+        del self._data["type"]
+        del self._data["id"]
+        del self._data["imageName"]
 
         return super(Card, self).__init__(*args, **kwargs)
 
@@ -51,7 +58,7 @@ class Card(object):
 
     @property
     def multiverse_id(self):
-        return self._data['id'] if 'id' in self._data.keys() else self._data['multiverseid']
+        return self._data['multiverseid']
 
     @property
     def name(self):
@@ -97,6 +104,10 @@ class Card(object):
         except KeyError:
             return 0
 
+    @property
+    def printings(self):
+        return self._data["printings"]
+
     def _getJSONdata(self, value):
         query_url = "http://api.mtgdb.info/cards/%s" % quote(str(value))
         #print("Gathering card info for %s" % query_url)
@@ -112,29 +123,33 @@ class Card(object):
 
     @property
     def imageURL(self):
-        set = self.printings[0].lower()
-
-        #WA: Apocolypse set  is AP under magiccards.info
-        if set == "apc":
-            set = "ap"
-
-        return PIC_BY_SETID.format(set=set,
-                                   language="en",
-                                   cardnum=self.number)
+        return r"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=%s&type=card" % self.multiverse_id
 
     def getImage(self):
         if not self.image_data.isNull():
+            log.debug("Image data for %s is null...", self)
             return self.image_data
 
-        CACHED_IMAGE = os.path.join(IMAGE_CACHE_FOLDER, "%s.jpg" % self.name)
+        if "multiverseid" not in self._data.keys():
+            log.warn("%s does not have a multiverseid, cannot download image.", self)
+            return self.image_data
 
-        if os.path.exists(CACHED_IMAGE):
+        CACHED_IMAGE = os.path.join(IMAGE_CACHE_FOLDER, "%s.png" % self.multiverse_id)
+
+        log.debug("Checking image cache for %s.png", self.multiverse_id)
+        if os.path.exists(CACHED_IMAGE) and os.path.getsize(CACHED_IMAGE) > 0:
+            log.debug("Found %s.png", self.multiverse_id)
+            log.debug("Size of %s.png is %s", self.multiverse_id, os.path.getsize(CACHED_IMAGE))
             image_data = QtGui.QImage(CACHED_IMAGE)
-            image_data = image_data.scaled(CARD_WIDTH, CARD_HEIGHT, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            #image_data = image_data.scaled(CARD_WIDTH, CARD_HEIGHT, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
             self.image_data.convertFromImage(image_data)
         else:
+            log.debug("Did not found the correct %s.png", self.multiverse_id)
+
+            log.debug("Downloading image data from %s", self.imageURL)
             data = urlopen(self.imageURL).read()
 
+            log.debug("Writing image data to disk (%s)", CACHED_IMAGE)
             with open(CACHED_IMAGE, "wb+") as f:
                 f.write(data)
 
@@ -144,14 +159,21 @@ class Card(object):
         return self.image_data
 
 if __name__ == "__main__":
-    from PyQt5.QtGui import QApplication, QLabel
-    from pprint import pprint
     import sys
+    from PyQt5.QtWidgets import QApplication, QLabel
+    from Database import CardDatabase
 
-    try:
-        from mtg.Database import CardDatabase
-    except ImportError:
-        from Database import CardDatabase
+    def human(size):
+        UNITS = ["B", "KB", "MB", "GB", "TB"]
+        HUMANFMT = "%f %s"
+        HUMANRADIX = 1024.
+
+        for u in UNITS[:-1]:
+            if size < HUMANRADIX: 
+                return HUMANFMT % (size, u)
+            size /= HUMANRADIX
+
+        return HUMANFMT % (size,  UNITS[-1])
 
     app = QApplication(sys.argv)
     lbl = QLabel("test")
@@ -159,15 +181,14 @@ if __name__ == "__main__":
     
     db = CardDatabase()
 
-    card = db.findByName("Narset, Enlightened Master")[-1]
-    print(card)
-    #pprint(card._data.keys())
-    #print(card.printings)
-    #print(card.number)
+    log.info("The size of the card database is %s", human(sys.getsizeof(db)))
+
+    for card in db.findByName("Narset, Enlightened Master"):
+        print(card)
+        for k,v in card._data.items():
+            print("%s:%s" % (k, v))
     
     image = card.getImage()
-    print(image.height())
-    print(image.width())
 
     lbl.setPixmap(image)
     lbl.resize(image.width(), image.height())

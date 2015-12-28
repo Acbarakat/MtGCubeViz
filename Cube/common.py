@@ -1,15 +1,7 @@
-﻿import sys
-import os
-
-try:
-    from PyQt5.QtCore import QString
-except ImportError:
-    QString = str
-
-try:
-    from urllib2 import urlopen, quote
-except ImportError:
-    from urllib.request import urlopen, quote
+﻿import os
+import sys
+import logging
+from urllib.request import urlopen, quote
 
 def find_path(*args):
     if getattr(sys, 'frozen', False):
@@ -26,7 +18,9 @@ CACHE_FOLDER = find_path( "cache" )
 if os.path.exists(CACHE_FOLDER) == False:
     os.makedirs(CACHE_FOLDER)
 
+CONSOLE_LOG_FMT = '%(asctime)s p:%(process)d t:%(thread)11d %(name)6.6s: %(levelname)-5.5s %(message)s'
+logging.basicConfig(format=CONSOLE_LOG_FMT, level=logging.INFO)
 
 
-__all__     = ['QString', 'urlopen', 'quote', 'CACHE_FOLDER', 'find_path']
+__all__     = ['urlopen', 'quote', 'CACHE_FOLDER', 'find_path']
 __version__ = "0.1"
