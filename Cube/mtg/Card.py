@@ -4,23 +4,23 @@ import logging
 from collections import defaultdict
 
 from PyQt5 import QtGui, QtCore
+from PyQt5.Qt import QUrl
+from PyQt5.QtNetwork import QNetworkRequest
 
 try:
-    from common import urlopen, quote
+    from common import IMAGE_CACHE_FOLDER, CARD_WIDTH, CARD_HEIGHT
     from mtg import *
 except ImportError:
     import sys
     fpath, _ = os.path.split(__file__)
     sys.path.append(os.path.join(fpath, ".."))
-    from common import urlopen, quote
+    from common import IMAGE_CACHE_FOLDER, CARD_WIDTH, CARD_HEIGHT
     from __init__ import *
 
 log = logging.getLogger("card")
 log.setLevel(logging.DEBUG)
 
-CARD_WIDTH, CARD_HEIGHT = (223, 311)
 
-IMAGE_CACHE_FOLDER = os.path.join( os.path.split(os.path.abspath(__file__))[0], "..", "cache" )
 
 class Card(object):
     """description of class"""
@@ -48,11 +48,14 @@ class Card(object):
         del self._data["id"]
         del self._data["imageName"]
 
+        if "flavor" in self._data and '\u2014' in self._data["flavor"]:
+            self._data["flavor"] = self._data["flavor"].replace('\u2014', "--")
+
         return super(Card, self).__init__(*args, **kwargs)
 
     def __repr__(self):
         if self.name:
-            return "<Card(%s)>" % self.name.encode("utf8")
+            return "<Card(%s, mid:%s)>" % (self.name.encode("utf8"), self.multiverse_id)
         else:
             return super(Card,self).__repr__()
 
@@ -123,9 +126,13 @@ class Card(object):
 
     @property
     def imageURL(self):
-        return r"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=%s&type=card" % self.multiverse_id
+        return QUrl("http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=%s&type=card" % self.multiverse_id)
 
-    def getImage(self):
+    @property
+    def cachedImageURI(self):
+        return QUrl().fromUserInput(os.path.join(IMAGE_CACHE_FOLDER, "%s.png" % self.multiverse_id))
+
+    def getImage(self, networkAccessManager):
         if not self.image_data.isNull():
             log.debug("Image data for %s is null...", self)
             return self.image_data
@@ -134,33 +141,26 @@ class Card(object):
             log.warn("%s does not have a multiverseid, cannot download image.", self)
             return self.image_data
 
-        CACHED_IMAGE = os.path.join(IMAGE_CACHE_FOLDER, "%s.png" % self.multiverse_id)
+        request = QNetworkRequest()
 
         log.debug("Checking image cache for %s.png", self.multiverse_id)
-        if os.path.exists(CACHED_IMAGE) and os.path.getsize(CACHED_IMAGE) > 0:
-            log.debug("Found %s.png", self.multiverse_id)
-            log.debug("Size of %s.png is %s", self.multiverse_id, os.path.getsize(CACHED_IMAGE))
-            image_data = QtGui.QImage(CACHED_IMAGE)
-            #image_data = image_data.scaled(CARD_WIDTH, CARD_HEIGHT, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-            self.image_data.convertFromImage(image_data)
+        cardURI = self.cachedImageURI.path()[1:] #fix for windows file system
+        if os.path.exists(cardURI):
+            log.debug("Found %s.png", cardURI)
+            request.setUrl(self.cachedImageURI)
         else:
             log.debug("Did not found the correct %s.png", self.multiverse_id)
+            request.setUrl(self.imageURL)
 
-            log.debug("Downloading image data from %s", self.imageURL)
-            data = urlopen(self.imageURL).read()
-
-            log.debug("Writing image data to disk (%s)", CACHED_IMAGE)
-            with open(CACHED_IMAGE, "wb+") as f:
-                f.write(data)
-
-            self.image_data.loadFromData( data )
-            self.image_data = self.image_data.scaled(CARD_WIDTH, CARD_HEIGHT, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-
-        return self.image_data
+        reply = networkAccessManager.get(request)
+        reply.setAttribute(QNetworkRequest.User, self)
 
 if __name__ == "__main__":
     import sys
+
     from PyQt5.QtWidgets import QApplication, QLabel
+    from PyQt5.QtNetwork import QNetworkAccessManager
+    
     from Database import CardDatabase
 
     def human(size):
@@ -175,8 +175,35 @@ if __name__ == "__main__":
 
         return HUMANFMT % (size,  UNITS[-1])
 
+    def finishedDownload(reply):
+        card = reply.attribute(QNetworkRequest.User)
+        log.debug("Got all image data for %s", card)
+
+        data = reply.readAll()
+
+        cardURI = card.cachedImageURI.path()[1:]
+
+        if reply.url().scheme() != "file":
+            log.debug("Writing image data to disk (%s)", cardURI)
+            with open(cardURI, "wb+") as f:
+                f.write(data)
+
+        card.image_data.loadFromData( data )
+        card.image_data = card.image_data.scaled(CARD_WIDTH, CARD_HEIGHT, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+
+        lbl.setPixmap(card.image_data)
+
+        del data
+        del cardURI
+
+        reply.close()
+
+
     app = QApplication(sys.argv)
+    nam = QNetworkAccessManager(parent=app)
+    nam.finished.connect(finishedDownload)
     lbl = QLabel("test")
+    lbl.resize(CARD_WIDTH, CARD_HEIGHT)
     lbl.show()
     
     db = CardDatabase()
@@ -185,12 +212,16 @@ if __name__ == "__main__":
 
     for card in db.findByName("Narset, Enlightened Master"):
         print(card)
-        for k,v in card._data.items():
-            print("%s:%s" % (k, v))
+        #for k,v in card._data.items():
+        #    print("%s:%s" % (k, v))
     
-    image = card.getImage()
+        card.getImage(networkAccessManager=nam)
 
-    lbl.setPixmap(image)
-    lbl.resize(image.width(), image.height())
+    for card in db.findByName("Lightning Helix"):
+        print(card)
+        #for k,v in card._data.items():
+        #    print("%s:%s" % (k, v))
+    
+        card.getImage(networkAccessManager=nam)
 
     sys.exit(app.exec_())

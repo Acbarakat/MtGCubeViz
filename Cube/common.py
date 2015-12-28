@@ -18,9 +18,12 @@ CACHE_FOLDER = find_path( "cache" )
 if os.path.exists(CACHE_FOLDER) == False:
     os.makedirs(CACHE_FOLDER)
 
+IMAGE_CACHE_FOLDER = os.path.join( os.path.split(os.path.abspath(__file__))[0], "cache" )
+
 CONSOLE_LOG_FMT = '%(asctime)s p:%(process)d t:%(thread)11d %(name)6.6s: %(levelname)-5.5s %(message)s'
 logging.basicConfig(format=CONSOLE_LOG_FMT, level=logging.INFO)
 
+CARD_WIDTH, CARD_HEIGHT = (223, 311)
 
 __all__     = ['urlopen', 'quote', 'CACHE_FOLDER', 'find_path']
 __version__ = "0.1"
