@@ -4,7 +4,15 @@ from lxml import etree, objectify
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant, QModelIndex, QAbstractItemModel, QUrl, QAbstractListModel
 
-from mtg.Card import IMAGE_CACHE_FOLDER
+try:
+    from common import IMAGE_CACHE_FOLDER, CARD_WIDTH, CARD_HEIGHT
+    #from mtg import *
+except ImportError:
+    import sys
+    fpath, _ = os.path.split(__file__)
+    sys.path.append(os.path.join(fpath, ".."))
+    from common import IMAGE_CACHE_FOLDER, CARD_WIDTH, CARD_HEIGHT
+    #from __init__ import *
 
 QCardLocation = QNetworkRequest.User
 
@@ -67,26 +75,27 @@ class GroupingModel(XPathModel):
     def _displayRole(self, el):
         return el.attrib['name']
     
-class CardsModel(QAbstractTableModel):
-    CACHE_IMAGES = True
-
-    def __init__(self, parent, *args, **kwargs):
+class CubeModel(QAbstractTableModel):
+    def __init__(self, cubeFile, cubeDB, parent=None, *args, **kwargs):
         QAbstractTableModel.__init__(self, parent, *args, **kwargs)
         
-        self._parent = parent
+        self._cubeFile = cubeFile
+        self._cubeData = None
+        self._cubeDB   = cubeDB
 
         self.manager = QNetworkAccessManager( parent=self )
         self.manager.finished.connect( self.downloadFinished )
 
     @property
     def xmldata(self):
-        cached_group = str(self._parent.comboBox_Grouping.currentText())
+        cached_group = u"guilds"
+        #cached_group = str(self._parent.comboBox_Grouping.currentText())
         
-        if not cached_group:
-            cached_group = self._parent.comboBox_Grouping.currentIndex() + 1
+        #if not cached_group:
+        #    cached_group = self._parent.comboBox_Grouping.currentIndex() + 1
 
-        if not cached_group:
-            return None
+        #if not cached_group:
+        #    return None
 
         if type(cached_group) == str:
             xpathcmd = "//grouping[@name='%s']" % cached_group
@@ -95,7 +104,7 @@ class CardsModel(QAbstractTableModel):
         else:
             xpathcmd = "//grouping"
 
-        return self._parent._cubeData.find(xpathcmd)
+        return self._cubeData.find(xpathcmd)
 
     @property
     def h_header(self):
@@ -110,10 +119,6 @@ class CardsModel(QAbstractTableModel):
             return self.xmldata.xpath("./vheaders/vheader/text()")
         except AttributeError:
             return []
-
-    @property
-    def cwFile(self):
-        return self._parent._cubeFile
 
     def rowCount(self, parent=None):
         return len(self.v_header)
@@ -130,56 +135,42 @@ class CardsModel(QAbstractTableModel):
         return QAbstractTableModel.headerData(self, section, orientation, role)
 
     def flags(self, QModelIndex):
-        flags = super(CardsModel, self).flags(QModelIndex)
+        flags = super(CubeModel, self).flags(QModelIndex)
         return flags | Qt.ItemIsEditable
 
     def data(self, index, role):
         if not index.isValid():
-            #return QVariant()
             return None
 
         row_key = self.v_header[index.row()]
         col_key = self.h_header[index.column()]
 
-        try:
-            data_key = self.xmldata.xpath("./cards/card[@row='%s'][@column='%s'][1]/text()" % (row_key, col_key))
-            data_key = data_key[0]
-        except IndexError:
-            #return QVariant()
+        data_key = self.xmldata.xpath("./cards/card[@row='%s'][@column='%s'][1]/text()" % (row_key, col_key))
+
+        if not data_key:
             return None
+        
+        data_key = data_key[0]
 
         if role == Qt.DisplayRole:
             return str(data_key)
         elif role == Qt.DecorationRole:
-            card = self._parent._card_database.findByName(data_key)
+            card = self._cubeDB.findByName(data_key)
             card = list(filter(lambda acard: acard._getImageFailed == False, card))
             try:
                 card = card[0]
-                image_data = card.image_data
             except IndexError:
                 return None
 
-            if not image_data.isNull():
-                return image_data
+            if not card.image_data.isNull():
+                return card.image_data
             
-            self.downloadImage(card)
+            card.getImage(networkAccessManager=self.manager)
 
         return None
 
-    def downloadImage(self, card):
-        url = QUrl(card.imageURL)
-        request = QNetworkRequest(url)
-        cardloc = self._parent._card_database.index(card)
-        
-        if not cardloc:
-            return
-        
-        reply = self.manager.get(request)
-        reply.setAttribute(QCardLocation, cardloc)
-
     def downloadFinished(self, reply, *args):
-        cardloc = reply.attribute(QCardLocation)
-        card = self._parent._card_database[cardloc]
+        card = reply.attribute(QCardLocation)
                                        
         if reply.error() != QNetworkReply.NoError:
             # request probably failed
@@ -194,49 +185,76 @@ class CardsModel(QAbstractTableModel):
         #card.image_data = self.image_data.scaled(CARD_WIDTH, CARD_HEIGHT, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.endResetModel()
         
-        if self.CACHE_IMAGES:
-            fp = os.path.join(IMAGE_CACHE_FOLDER, "%s.jpg" % card.name)
-            card.image_data.save(fp)
+        del data
 
-    def setData(self, row, column, value):
-        row_key = self.v_header[row]
-        col_key = self.h_header[column]
-        changed = False
+        fp = os.path.join(IMAGE_CACHE_FOLDER, "%s.png" % card.multiverse_id)
+        card.image_data.save(fp)
 
-        card = self.xmldata.find("cards")
-        if not card:
-            card = etree.Element("cards")
-            self.xmldata.insert(0, card)
+    def setData(self, index, value, role = Qt.EditRole):
+        row_key = self.v_header[index.row()]
+        col_key = self.h_header[index.column()]
 
-        card = card.xpath("./card[@row='%s'][@column='%s']" % (row_key, col_key))
+        cards = self.xmldata.find("cards")
+        if not len( cards ):
+            cards = etree.Element("cards")
+            self.xmldata.insert(0, cards)
+
+        card = cards.xpath("./card[@row='%s'][@column='%s']" % (row_key, col_key))
 
         self.beginResetModel()
-        if card and card[0].text != str(value):
+        if len(card) and card[0].text != str(value):
             card[0].text = str(value)
-            changed = True
         else:
             c = etree.Element("card", row=row_key, column=col_key)
             c.text = str(value)
-            self.xmldata.find("cards").insert(0, c)
-            changed = True
-            
-        if changed and self.cwFile:
-            self._parent._fileSave()
-
+            cards.insert(0, c)
         self.endResetModel()
 
-    def removeData(self, index):
-        row = index.row()
-        col = index.column()
+        if self._cubeFile:
+            #self._parent._fileSave()
+            pass
 
-        row_key = self.v_header[row]
-        col_key = self.h_header[col]
+        return True
+
+    def removeData(self, index):
+        row_key = self.v_header[index.row()]
+        col_key = self.h_header[index.column()]
 
         self.beginResetModel()
         tricol = self.xmldata.xpath("./cards/card[@row='%s'][@column='%s']" % (row_key, col_key))[0]
         tricol.getparent().remove(tricol)
 
-        if self.cwFile:
-            self._parent._fileSave()
-
         self.endResetModel()
+
+        if self.cubeFile:
+            #self._parent._fileSave()
+            pass
+
+
+if __name__ == "__main__":
+    import sys
+
+    from PyQt5.QtWidgets import QApplication, QTableView
+
+    from mtg.Database import CardDatabase
+
+    app = QApplication(sys.argv)
+
+    db = CardDatabase()
+
+    mdl = CubeModel(os.path.abspath(r".\MyCube.xml"), db, parent=app)
+    mdl._cubeData = etree.parse(mdl._cubeFile)
+
+    tbl = QTableView()
+    tbl.setModel(mdl)
+    tbl.resize(800, 600)
+
+    for i in range(mdl.columnCount()):
+        tbl.setColumnWidth(i, CARD_WIDTH)
+
+    for i in range(mdl.rowCount()):
+        tbl.setRowHeight(i, CARD_HEIGHT)
+
+    tbl.show()
+
+    sys.exit(app.exec_())

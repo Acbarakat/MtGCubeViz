@@ -42,6 +42,10 @@ class CardDatabase(list):
         for k,v in card_database.items():
             if "cards" in v:
                 for i in v["cards"]:
+                    #print(i)
+                    if "multiverseid" not in i:
+                        continue
+
                     i["printings"] = [ k ]
                     self.append( Card(i) )
             else:
@@ -64,6 +68,10 @@ class CardDatabase(list):
             colors = xml_item.attrib["color"]
             colors = colors.split(",")
 
+            if colors == ['']:
+                colors = []
+                xml_item.attrib["color_match"] = "exact"
+
             for color in colors:
                 dblist = dblist.filterByColor(color)
 
@@ -85,7 +93,7 @@ class CardDatabase(list):
         return CardDatabase(data=data)
 
     def filterDuplicates(self):
-        data = []
+        data  = []
         names = []
 
         for card in self:
@@ -95,6 +103,9 @@ class CardDatabase(list):
             data.append(card)
             names.append(card.name)
         
+        print( [ card.name for card in self ] )
+        print( names )
+
         return CardDatabase(data=data) 
 
     def filterByExactColorCount(self, i):
@@ -125,6 +136,22 @@ class CardDatabase(list):
         data = list(filter(lambda card: cardtype in card.types, self))
         return CardDatabase(data=data)
 
+    def filterByPrinting(self, printing):
+        data = list(filter(lambda card: printing in card.printings, self))
+        return CardDatabase(data=data)
+
+    def distinctRarity(self):
+        data = []
+
+        for rarity in ("Mythic", "Rare", "Uncommon", "Common"):
+            temp_data = self.filterByRarity(rarity)
+
+            if temp_data:
+                data.append( temp_data[0] )
+
+        return CardDatabase(data=data)
+
+
 class CubeDatabase(CardDatabase):
     FORMAT_TEXT_FILE = "txt"
     FORMAT_CSV_FILE  = "csv"
@@ -138,8 +165,19 @@ class CubeDatabase(CardDatabase):
         data = etree.parse(fpath)
 
         cards = data.xpath(".//cards/card")
+        
+        for card in cards:
+            main_cubedb = carddb.filterInNameList( [card.text] )
+            
+            if len(main_cubedb) > 1:
+                main_cubedb = main_cubedb.distinctRarity()
 
-        main_cubedb = carddb.filterInNameList([card.text for card in cards])
+                if len(main_cubedb) > 1:
+                    print(main_cubedb)
+
+            if "printing" in card.attrib:
+                main_cubedb = main_cubedb.filterByPrinting( card.attrib["printing"] )
+        
         main_cubedb = main_cubedb.sort(key = lambda card: card.name.lower())
         main_cubedb = main_cubedb.filterDuplicates()
 

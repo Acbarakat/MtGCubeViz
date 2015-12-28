@@ -8,7 +8,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from GUI.models import CardsModel, GroupingModel
+from GUI.models import CubeModel, GroupingModel
 from GUI.delegates import CardsDelegate
 from GUI.dialog import CardSelectionDialog
 
@@ -39,7 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.errorMessageDialog.setWindowModality(Qt.ApplicationModal)
 
         self.grouping_model = GroupingModel(parent=self)
-        self.tablemodel     = CardsModel(parent=self)
+        self.tablemodel     = CubeModel(parent=self)
 
         self.comboBox_Grouping.setModel(self.grouping_model)
 

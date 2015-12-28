@@ -146,14 +146,16 @@ class Card(object):
         log.debug("Checking image cache for %s.png", self.multiverse_id)
         cardURI = self.cachedImageURI.path()[1:] #fix for windows file system
         if os.path.exists(cardURI):
-            log.debug("Found %s.png", cardURI)
+            log.debug("Found %s", cardURI)
             request.setUrl(self.cachedImageURI)
         else:
-            log.debug("Did not found the correct %s.png", self.multiverse_id)
+            log.debug("Downloading image %s", self.imageURL.toString())
             request.setUrl(self.imageURL)
 
         reply = networkAccessManager.get(request)
         reply.setAttribute(QNetworkRequest.User, self)
+
+        return reply
 
 if __name__ == "__main__":
     import sys
